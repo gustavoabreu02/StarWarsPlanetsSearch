@@ -3,8 +3,8 @@ import context from '../context/MyContext';
 import Filters from './Filters';
 
 function Table() {
-  const { data, filterByName } = useContext(context);
-  console.log(data);
+  const { filter, filterByName } = useContext(context);
+  console.log(filter);
   return (
     <div>
       <Filters />
@@ -27,23 +27,24 @@ function Table() {
           </tr>
         </thead>
         <tbody>
-          { data.filter((planet) => planet.name.includes(filterByName)).map((planet) => (
-            <tr key={ planet.name }>
-              <td>{ planet.name }</td>
-              <td>{ planet.rotation_period }</td>
-              <td>{ planet.orbital_period }</td>
-              <td>{ planet.diameter }</td>
-              <td>{ planet.climate }</td>
-              <td>{ planet.gravity }</td>
-              <td>{ planet.terrain }</td>
-              <td>{ planet.surface_water }</td>
-              <td>{ planet.population }</td>
-              <td>{ planet.films.map((film) => film) }</td>
-              <td>{ planet.created }</td>
-              <td>{ planet.edited }</td>
-              <td>{ planet.url}</td>
-            </tr>
-          )) }
+          { filter.filter((planet) => planet.name.includes(filterByName))
+            .map((planet) => (
+              <tr key={ planet.name }>
+                <td>{ planet.name }</td>
+                <td>{ planet.rotation_period }</td>
+                <td>{ planet.orbital_period }</td>
+                <td>{ planet.diameter }</td>
+                <td>{ planet.climate }</td>
+                <td>{ planet.gravity }</td>
+                <td>{ planet.terrain }</td>
+                <td>{ planet.surface_water }</td>
+                <td>{ planet.population }</td>
+                <td>{ planet.films.map((film) => film) }</td>
+                <td>{ planet.created }</td>
+                <td>{ planet.edited }</td>
+                <td>{ planet.url}</td>
+              </tr>
+            )) }
         </tbody>
       </table>
     </div>

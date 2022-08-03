@@ -4,22 +4,57 @@ import context from './MyContext';
 
 function Provider({ children }) {
   const [data, setData] = useState([]);
+  const [filter, setFilter] = useState([]);
   const [filterByName, setFilterByName] = useState('');
+  const [filterByColumn, setFilterByColumn] = useState('population');
+  const [comparisonFilter, setComparisonFilter] = useState('maior que');
+  const [valueFilter, setValueFilter] = useState('0');
 
   useEffect(() => {
-    fetch('https://swapi-trybe.herokuapp.com/api/planets/')
-      .then((dat) => dat.json())
-      .then((response) => response.results)
-      .then((responseFinal) => setData(responseFinal));
+    const ApiPlanets = async () => {
+      const url = 'https://swapi-trybe.herokuapp.com/api/planets/';
+      const promise = await fetch(url);
+      const response = await promise.json();
+      response.results.forEach((oneColumn) => delete oneColumn.residents);
+      setData(response.results);
+      setFilter(response.results);
+    };
+    ApiPlanets();
   }, []);
 
-  console.log(data);
   function handleChange(value) {
     setFilterByName(value);
   }
 
+  function filterPlanets(column, comparison, value) {
+    if (comparison === 'maior que') {
+      setFilter(data.filter((planet) => Number(planet[column]) > Number(value)));
+    }
+    if (comparison === 'menor que') {
+      setFilter(data.filter((planet) => Number(planet[column]) < Number(value)));
+    }
+    if (comparison === 'igual a') {
+      setFilter(data.filter((planet) => planet[column] === value));
+    }
+  }
+
   return (
-    <context.Provider value={ { data, handleChange, filterByName } }>
+    <context.Provider
+      value={ { filter,
+        filterPlanets,
+        handleChange,
+        filterByName,
+        filterByNumericValues: [
+          {
+            column: filterByColumn,
+            comparison: comparisonFilter,
+            value: valueFilter,
+          },
+        ],
+        setFilterByColumn,
+        setComparisonFilter,
+        setValueFilter } }
+    >
       {children}
     </context.Provider>
   );
