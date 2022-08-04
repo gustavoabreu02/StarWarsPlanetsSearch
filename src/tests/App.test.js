@@ -97,32 +97,6 @@ json: () => Promise.resolve(testData)
   })
 
 
-  // test('if  work', async () =>{
-  //   render(<App />);
-  //   const table = document.getElementsByTagName("tr")
-  //   const botao = screen.getByTestId("button-filter")
-  //   const coluna = screen.getByTestId("column-filter")
-  //   const valor = screen.getByTestId("value-filter")
-  //   const comparasion = screen.getByTestId("comparison-filter")
-  //   const cleaAll = screen.getByTestId("button-remove-filters")
-  //   userEvent.selectOptions(coluna, "orbital_period")
-  //   userEvent.selectOptions(comparasion, "menor que")
-  //   userEvent.clear(valor)
-  //   userEvent.type(valor, "400")
-  //   userEvent.click(botao)
-  //   await waitFor(() => {
-  //     expect(table).toHaveLength(6)
-  //     })
-  //     userEvent.selectOptions(coluna, "population")
-  //     userEvent.selectOptions(comparasion, "igual a")
-  //     userEvent.clear(valor)
-  //     userEvent.type(valor, "1000")
-  //     userEvent.click(botao)
-  //     await waitFor(() => {
-  //       expect(table).toHaveLength(1)
-  //       })
-  // })
-
   test('if this work', async () =>{
     render(<App />);
     const table = document.getElementsByTagName("tr")
