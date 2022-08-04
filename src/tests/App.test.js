@@ -118,4 +118,45 @@ json: () => Promise.resolve(testData)
     expect(button1).not.toBeInTheDocument()
   })
 
+  test('orderDesc', async () => {
+    render(<App />);
+    const botao = screen.getByTestId("column-sort-button")
+    const table = document.getElementsByTagName("tr")
+    const radioAsc = screen.getByTestId("column-sort-input-asc")
+    const radioDesc = screen.getByTestId("column-sort-input-desc")
+    const columnSort = screen.getByTestId("column-sort")
+    expect(botao).toBeInTheDocument()
+    expect(radioAsc).toBeInTheDocument()
+    expect(radioDesc).toBeInTheDocument()
+    expect(columnSort).toBeInTheDocument()
+    userEvent.selectOptions(columnSort, "population")
+    userEvent.click(botao)
+    userEvent.click(radioDesc)
+    await waitFor(() => {
+      expect(table).toHaveLength(11)
+      })
+    
+  })
+
+  test('orderAsc', async () => {
+    render(<App />);
+    const botao = screen.getByTestId("column-sort-button")
+    const table = document.getElementsByTagName("tr")
+    const radioAsc = screen.getByTestId("column-sort-input-asc")
+    const radioDesc = screen.getByTestId("column-sort-input-desc")
+    const columnSort = screen.getByTestId("column-sort")
+    expect(botao).toBeInTheDocument()
+    expect(radioAsc).toBeInTheDocument()
+    expect(radioDesc).toBeInTheDocument()
+    expect(columnSort).toBeInTheDocument()
+    userEvent.selectOptions(columnSort, "population")
+    userEvent.click(botao)
+    userEvent.click(radioAsc)
+    await waitFor(() => {
+      expect(table).toHaveLength(11)
+      })
+    
+  })
+
+
 })
