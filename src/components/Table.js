@@ -4,7 +4,6 @@ import Filters from './Filters';
 
 function Table() {
   const { filter, filterByName } = useContext(context);
-  console.log(filter);
   return (
     <div>
       <Filters />

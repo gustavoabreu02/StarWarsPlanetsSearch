@@ -6,9 +6,6 @@ function Provider({ children }) {
   const [data, setData] = useState([]);
   const [filter, setFilter] = useState([]);
   const [filterByName, setFilterByName] = useState('');
-  const [filterByColumn, setFilterByColumn] = useState('population');
-  const [comparisonFilter, setComparisonFilter] = useState('maior que');
-  const [valueFilter, setValueFilter] = useState('0');
 
   useEffect(() => {
     const ApiPlanets = async () => {
@@ -26,34 +23,26 @@ function Provider({ children }) {
     setFilterByName(value);
   }
 
-  function filterPlanets(column, comparison, value) {
+  function filterPlanets(column, comparison, value, planets) {
     if (comparison === 'maior que') {
-      setFilter(data.filter((planet) => Number(planet[column]) > Number(value)));
+      setFilter(planets.filter((planet) => Number(planet[column]) > Number(value)));
     }
     if (comparison === 'menor que') {
-      setFilter(data.filter((planet) => Number(planet[column]) < Number(value)));
+      setFilter(planets.filter((planet) => Number(planet[column]) < Number(value)));
     }
     if (comparison === 'igual a') {
-      setFilter(data.filter((planet) => planet[column] === value));
+      setFilter(planets.filter((planet) => planet[column] === value));
     }
   }
 
   return (
     <context.Provider
       value={ { filter,
+        setFilter,
+        data,
         filterPlanets,
         handleChange,
-        filterByName,
-        filterByNumericValues: [
-          {
-            column: filterByColumn,
-            comparison: comparisonFilter,
-            value: valueFilter,
-          },
-        ],
-        setFilterByColumn,
-        setComparisonFilter,
-        setValueFilter } }
+        filterByName } }
     >
       {children}
     </context.Provider>
