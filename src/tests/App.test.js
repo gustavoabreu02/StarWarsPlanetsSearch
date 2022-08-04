@@ -1,58 +1,147 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import App from '../App';
-import testData from '../../cypress/mocks/testData';
 import userEvent from '@testing-library/user-event';
-describe('testes de API', () => {
-    beforeEach(() => render(<App />));
-    it('testa se a tabela é renderizada', async () => {
-      const tabela = await screen.findByRole('table')
-      expect(tabela).toBeInTheDocument();
-      const tableHeader = await screen.findAllByRole('columnheader')
-      expect(tableHeader).toHaveLength(13);
-    })
+import testData from '../../cypress/mocks/testData'
+
+
+describe('req 5 e 8', () => {
+
+  beforeEach(() => {
+    jest.spyOn(global, "fetch").mockImplementation(() =>
+Promise.resolve({
+json: () => Promise.resolve(testData)
+})) 
   })
-    describe('filtros na tela', () => {
-      beforeEach(() => render(<App />));
-      it('testa input para nome', () => {
-        const inputName = screen.getByTestId('name-filter');
-        expect(inputName).toBeInTheDocument;
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  test('chamada API', () => {
+    render(<App />);
+    expect(fetch).toHaveBeenCalled()
+  })
+
+
+  test('filter by name', async () => {
+    render(<App />);
+    const nome = await screen.findByTestId("name-filter",'',{timeout: 5000});
+    expect(nome).toBeInTheDocument()
+    userEvent.type(nome, "Tatooine")
+    const table = document.getElementsByTagName("tr")
+    await waitFor(() => {
+      expect(table).toHaveLength(2) 
       })
-      it('testa filtro de coluna', () => {
-        const selectColumn = screen.getByTestId('column-filter');
-        expect(selectColumn).toBeInTheDocument;
-      })
-      it('testa filtro de operador', () => {
-        const selectComparison = screen.getByTestId('comparison-filter');
-        expect(selectComparison).toBeInTheDocument;
-      })
-      it('testa filtro de valor', () => {
-        const inputValue = screen.getByTestId('value-filter');
-        expect(inputValue).toBeInTheDocument;
-      })
-      it('testa botão de filtrar', () => {
-        const selectColumn = screen.getByTestId('column-filter');
-        expect(selectColumn).toBeInTheDocument;
-      })
+  }, 7000)
+
+  test('formulario', () => { 
+    render(<App />);
+    const nome = screen.getByTestId("name-filter")
+    expect(nome).toBeInTheDocument()
+    const coluna = screen.getByTestId("column-filter")
+    expect(coluna).toBeInTheDocument()
+    const valor = screen.getByTestId("value-filter")
+    expect(valor).toBeInTheDocument()
+    const botao = screen.getByTestId("button-filter")
+    expect(botao).toBeInTheDocument()
+    const comparasion = screen.getByTestId("comparison-filter")
+    expect(comparasion).toBeInTheDocument()
+    const cleaAll = screen.getByTestId("button-remove-filters")
+    expect(cleaAll).toBeInTheDocument()
+  });  
+
+  test('tabela', async () => { 
+    render(<App />);
+    const botao = await screen.findByTestId("button-filter",'',{timeout: 10000})
+    await waitFor(() => {
+    const table = document.getElementsByTagName("tr")
+    expect(table).toHaveLength(11)
+  })
+  }, 12000);
+
+  test('if this shit work', async () =>{
+    render(<App />);
+    const table = document.getElementsByTagName("tr")
+    const botao = screen.getByTestId("button-filter")
+    const coluna = screen.getByTestId("column-filter")
+    const valor = screen.getByTestId("value-filter")
+    const comparasion = screen.getByTestId("comparison-filter")
+    userEvent.selectOptions(coluna, "population")
+    userEvent.selectOptions(comparasion, "maior que")
+    userEvent.clear(valor)
+    userEvent.type(valor, "1000")
+    console.log(valor);
+    userEvent.click(botao)
+    await waitFor(() => {
+    expect(table).toHaveLength(11)
     })
-    describe('funcionalidade dos filtros', () => {
-      beforeEach(() => render(<App />));
-      it('testa filtro de nome', () => {
-        const inputName = screen.getByTestId('name-filter');
-        userEvent.type(inputName, 't')
-  
+    const cleaAll = screen.getByTestId("button-remove-filters")
+    userEvent.click(cleaAll)
+    expect(table).toHaveLength(11)
+    userEvent.selectOptions(comparasion, "menor que")
+    userEvent.clear(valor)
+    userEvent.type(valor, "1000")
+    userEvent.click(botao)
+    await waitFor(() => {
+      expect(table).toHaveLength(1)
       })
-      it('testa filtragem de conjunto', () => {
-        const selectComparison = screen.getByTestId('comparison-filter')
-        const inputValue = screen.getByTestId('value-filter')
-        const btnFilter = screen.getByTestId('button-filter')
-        const selectColumn = screen.getByTestId('column-filter')
-  
-        userEvent.selectOptions(selectColumn,
-        screen.getAllByRole('option', { name: /population/i })[0])
-        userEvent.selectOptions(selectComparison,
-        screen.getByRole('option', { name: 'menor que'}))
-        userEvent.type(inputValue, '100000')
-        userEvent.click(btnFilter)
+    userEvent.click(cleaAll)
+    userEvent.selectOptions(comparasion, "igual a")
+    userEvent.clear(valor)
+    userEvent.type(valor, "1000")
+    userEvent.click(botao)
+    await waitFor(() => {
+      expect(table).toHaveLength(2)
       })
+  })
+
+
+  // test('if  work', async () =>{
+  //   render(<App />);
+  //   const table = document.getElementsByTagName("tr")
+  //   const botao = screen.getByTestId("button-filter")
+  //   const coluna = screen.getByTestId("column-filter")
+  //   const valor = screen.getByTestId("value-filter")
+  //   const comparasion = screen.getByTestId("comparison-filter")
+  //   const cleaAll = screen.getByTestId("button-remove-filters")
+  //   userEvent.selectOptions(coluna, "orbital_period")
+  //   userEvent.selectOptions(comparasion, "menor que")
+  //   userEvent.clear(valor)
+  //   userEvent.type(valor, "400")
+  //   userEvent.click(botao)
+  //   await waitFor(() => {
+  //     expect(table).toHaveLength(6)
+  //     })
+  //     userEvent.selectOptions(coluna, "population")
+  //     userEvent.selectOptions(comparasion, "igual a")
+  //     userEvent.clear(valor)
+  //     userEvent.type(valor, "1000")
+  //     userEvent.click(botao)
+  //     await waitFor(() => {
+  //       expect(table).toHaveLength(1)
+  //       })
+  // })
+
+  test('if this work', async () =>{
+    render(<App />);
+    const table = document.getElementsByTagName("tr")
+    const botao = screen.getByTestId("button-filter")
+    const coluna = screen.getByTestId("column-filter")
+    const valor = screen.getByTestId("value-filter")
+    const comparasion = screen.getByTestId("comparison-filter")
+    userEvent.selectOptions(coluna, "population")
+    userEvent.selectOptions(comparasion, "maior que")
+    userEvent.clear(valor)
+    userEvent.type(valor, "1000")
+    userEvent.click(botao)
+    await waitFor(() => {
+    expect(table).toHaveLength(11)
     })
+    const button1 = screen.getByText("X")
+    expect(button1).toBeInTheDocument()
+    userEvent.click(button1)
+    expect(button1).not.toBeInTheDocument()
+  })
+
+})

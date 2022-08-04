@@ -10,7 +10,7 @@ function Filters() {
   const [filtersColunm, setFiltersColunm] = useState(['population',
     'orbital_period', 'diameter', 'rotation_period', 'surface_water']);
   const { handleChange,
-    filterPlanets, data, setFilter } = useContext(context);
+    filterPlanets, data, setFilter, filter } = useContext(context);
 
   const handleClick = ({ target }) => {
     if (target.name === 'filterByColumn') {
@@ -27,8 +27,11 @@ function Filters() {
   const removeFilter = ({ target }) => {
     const planets = data;
     const arrayDelet = filterByNumericValues
-      .filter((filter) => filter.column !== target.name);
+      .filter((filte, i) => i !== Number(target.name));
     setFilterByNumericValues(arrayDelet);
+    console.log(arrayDelet);
+    console.log(filter);
+    console.log(data);
     if (arrayDelet.length === 0) {
       setFilter(data);
     } else {
@@ -86,7 +89,7 @@ function Filters() {
         type="button"
         data-testid="button-filter"
         onClick={ () => {
-          const planets = data;
+          const planets = filter;
           setFiltersColunm(filtersColunm.filter((column) => column !== filterByColumn));
           const arrayFilters = [...filterByNumericValues, {
             column: filterByColumn,
@@ -102,17 +105,16 @@ function Filters() {
         FILTRAR
 
       </button>
-      { filterByNumericValues.map((filter, i) => (
+      { filterByNumericValues.map((filte, i) => (
         <span
           key={ i }
           data-testid="filter"
         >
-          { `${filter.column} ${filter.comparison} ${filter.value} ` }
+          { `${filte.column} ${filte.comparison} ${filte.value} ` }
           <button
-            name={ filter.column }
+            name={ i }
             onClick={ removeFilter }
             type="button"
-            data-testid="button-remove-filters"
           >
             X
 
